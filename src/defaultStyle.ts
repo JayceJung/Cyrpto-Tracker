@@ -51,6 +51,7 @@ table {
 }
 a {
     text-decoration: none;
+	color: inherit;
 }
 body {
     background-color: ${(props) => props.theme.backgroundColor};
