@@ -1,33 +1,34 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { CoinInterface } from "../shared/CoinInterface";
+import { fetchCoins } from "../api";
+import { ICoin } from "../shared/Interface";
 
 const Coins = () => {
-  const [coins, setCoins] = useState<CoinInterface[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      const res = await fetch("https://api.coinpaprika.com/v1/coins");
-      const json = await res.json();
-      setCoins(json.slice(0, 100));
-      setLoading(false);
-    })();
-  }, []);
+  const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
 
   return (
     <Container>
       <Header>
         <Title>Coins</Title>
       </Header>
-      {loading ? (
-        "Loading..."
+      {isLoading ? (
+        <Loader>"Loading..."</Loader>
       ) : (
         <CoinsList>
-          {coins.map((coin) => (
+          {data?.slice(0, 100).map((coin) => (
             <Coin key={coin.id}>
-              <Link to={`/${coin.id}`}>{coin.name} &rarr;</Link>
+              <Link
+                to={{
+                  pathname: `/${coin.id}`,
+                  state: { name: coin.name },
+                }}
+              >
+                <Img
+                  src={`https://cryptocurrencyliveprices.com/img/${coin.id}.png`}
+                />
+                {coin.name} &rarr;
+              </Link>
             </Coin>
           ))}
         </CoinsList>
@@ -64,13 +65,25 @@ const Coin = styled.li`
   border-radius: 15px;
   a {
     transition: color 0.2s ease-in;
-    display: block;
+    display: flex;
+    align-items: center;
   }
   &:hover {
     a {
       color: ${(props) => props.theme.accentColor};
     }
   }
+`;
+
+const Loader = styled.span`
+  text-align: center;
+  display: block;
+`;
+
+const Img = styled.img`
+  width: 30px;
+  height: 30px;
+  margin-right: 15px;
 `;
 
 export default Coins;
