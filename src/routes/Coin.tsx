@@ -29,17 +29,24 @@ const Coin = () => {
   );
   const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
     ["tickers", coinId],
-    () => fetchCoinTickers(coinId)
+    () => fetchCoinTickers(coinId),
+    {
+      refetchInterval: 5000,
+    }
   );
 
-  const loading = infoLoading || tickersLoading;
+  const loading = infoLoading && tickersLoading;
 
   return (
     <Container>
+      <Back to="/">&larr; Back to Coins</Back>
       <Header>
-        <Title> {state?.name || "Loading.."} </Title>
+        <Title>
+          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+        </Title>
       </Header>
-      {loading ? (
+
+      {infoLoading && tickersLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
@@ -65,6 +72,12 @@ const Coin = () => {
               <span>{tickersData?.max_supply}</span>
             </OverviewItem>
           </Overview>
+          <PriceOverview>
+            <PriceOverviewItem>
+              <span>Current Price:</span>
+              <span>${tickersData?.quotes.USD.price.toFixed(3)}</span>
+            </PriceOverviewItem>
+          </PriceOverview>
           <Description>{infoData?.description}</Description>
           <TabWrap>
             <Tab isActive={priceMatch !== null} to={`/${coinId}/price`}>
@@ -76,10 +89,10 @@ const Coin = () => {
           </TabWrap>
           <Switch>
             <Route path={`/:coinId/price`}>
-              <Price />
+              <Price coinId={coinId} />
             </Route>
             <Route path={`/:coinId/chart`}>
-              <Chart />
+              <Chart coinId={coinId} />
             </Route>
           </Switch>
         </>
@@ -87,6 +100,12 @@ const Coin = () => {
     </Container>
   );
 };
+
+const Back = styled(Link)`
+  display: flex;
+  align-items: center;
+  margin: 20px 10px 0;
+`;
 
 const Title = styled.h1`
   font-size: 48px;
@@ -99,11 +118,12 @@ const Container = styled.div`
   margin: 0 auto;
 `;
 
-const Header = styled.header`
+const Header = styled.div`
   height: 10vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 10px;
 `;
 
 const Loader = styled.span`
@@ -117,12 +137,36 @@ const Overview = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
   padding: 10px 20px;
   border-radius: 10px;
+  margin-bottom: 10px;
+`;
+
+const PriceOverview = styled.div`
+  display: flex;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 10px;
 `;
 
 const OverviewItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  span:first-child {
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+`;
+
+const PriceOverviewItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  span {
+    font-size: 20px;
+  }
   span:first-child {
     font-size: 10px;
     font-weight: 400;
