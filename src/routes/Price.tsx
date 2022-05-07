@@ -27,8 +27,18 @@ const Price = ({ coinId }: ChartProps) => {
               <span>${data && data[0].open.toFixed(3)}</span>
             </InfoItem>
           </Info>
-          <Info> High: ${data && data[0].high.toFixed(3)}</Info>
-          <Info> Low: ${data && data[0].low.toFixed(3)}</Info>
+          <Info>
+            <InfoItem>
+              <span>High:</span>
+              <span>${data && data[0].high.toFixed(3)}</span>
+            </InfoItem>
+          </Info>
+          <Info>
+            <InfoItem>
+              <span>Low:</span>
+              <span>${data && data[0].low.toFixed(3)}</span>
+            </InfoItem>
+          </Info>
         </Grid>
       )}
     </div>

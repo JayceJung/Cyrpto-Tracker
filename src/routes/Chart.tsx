@@ -99,6 +99,9 @@ const Chart = ({ coinId }: ChartProps) => {
               },
               xaxis: {
                 type: "datetime",
+                title: {
+                  text: "2 Weeks",
+                },
               },
               fill: {
                 colors: undefined,

@@ -81,7 +81,7 @@ const Coin = () => {
           <Description>{infoData?.description}</Description>
           <TabWrap>
             <Tab isActive={priceMatch !== null} to={`/${coinId}/price`}>
-              Price
+              Today's Price
             </Tab>
             <Tab isActive={chartMatch !== null} to={`/${coinId}/chart`}>
               Chart
